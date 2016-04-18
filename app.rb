@@ -7,6 +7,11 @@ configure :test, :development do
   DataMapper.setup :default, "sqlite::memory:"
 end
 
+configure :production do
+  # Expecting Heroku to set DATABASE_URL
+  DataMapper.setup(:default, ENV['DATABASE_URL'])
+end
+
 DataMapper.auto_upgrade!
 
 class Web < Sinatra::Base
