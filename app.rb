@@ -59,13 +59,13 @@ module UrlShortener
         shortened_url_base = request.base_url + '/r/'
         url_match = /#{shortened_url_base}(.*)/.match(short_url)
         if (url_match.nil?)
-          fail "Invalid shortUrl"
+          fail Grape::Exceptions::Validation, params: [short_url], message: "is not recognizable"
         end
         id = url_match[1]
         url = URL.first(id: id)
 
         if (url.nil?)
-          fail "Invalid shortUrl"
+          fail Grape::Exceptions::Validation, params: [short_url], message: "does not exist in our database"
         end
 
         {shortUrl: short_url, longUrl: url.long_url}
