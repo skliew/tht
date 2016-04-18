@@ -19,7 +19,8 @@ class Web < Sinatra::Base
   set :public_folder, Proc.new { File.join(root, "public/swagger_ui/dist") }
 
   get '/' do
-    redirect '/index.html'
+    swagger_doc_url = request.base_url + '/api/swagger_doc'
+    redirect "/index.html?url=#{swagger_doc_url}"
   end
 
   get '/r/:id' do
