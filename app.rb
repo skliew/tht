@@ -26,9 +26,12 @@ class Web < Sinatra::Base
   get '/r/:id' do
     id = params['id']
     if id !~ /^\d+$/
-      raise ArgumentError, "argument must be a number"
+      fail Grape::Exceptions::Validation, params: [id], message: "must be a number"
     end
     url = URL.first(id: id)
+    if (url.nil?)
+      fail Grape::Exceptions::Validation, params: [id], message: "is not a valid ID"
+    end
     redirect url.long_url
   end
 end
