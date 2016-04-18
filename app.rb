@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'grape'
+require 'grape-swagger'
 require_relative 'model/url'
 require_relative 'validator'
 
@@ -76,6 +77,7 @@ module UrlShortener
     format :json
     mount UrlShortener::Url
     mount UrlShortener::Status
+    add_swagger_documentation
   end
 
 end

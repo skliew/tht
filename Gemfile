@@ -7,6 +7,7 @@ gem "grape"
 gem 'data_mapper'
 gem 'pg'
 gem 'dm-postgres-adapter'
+gem 'grape-swagger'
 
 group :development, :test do
   gem 'rspec'
