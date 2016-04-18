@@ -5,12 +5,15 @@ source "https://rubygems.org"
 gem "sinatra"
 gem "grape"
 gem 'data_mapper'
-gem 'pg'
-gem 'dm-postgres-adapter'
 gem 'grape-swagger'
 
 group :development, :test do
   gem 'rspec'
   gem 'dm-sqlite-adapter'
   gem 'rack-test'
+end
+
+group :production do
+  gem 'pg'
+  gem 'dm-postgres-adapter'
 end
