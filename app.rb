@@ -26,11 +26,11 @@ class Web < Sinatra::Base
   get '/r/:id' do
     id = params['id']
     if id !~ /^\d+$/
-      fail Grape::Exceptions::Validation, params: [id], message: "must be a number"
+      raise ArgumentError, "#{id} is not a valid ID"
     end
     url = URL.first(id: id)
     if (url.nil?)
-      fail Grape::Exceptions::Validation, params: [id], message: "is not a valid ID"
+      raise ArgumentError, "#{id} does not exist in our database"
     end
     redirect url.long_url
   end
@@ -59,13 +59,13 @@ module UrlShortener
         shortened_url_base = request.base_url + '/r/'
         url_match = /#{shortened_url_base}(.*)/.match(short_url)
         if (url_match.nil?)
-          fail Grape::Exceptions::Validation, params: [short_url], message: "is not recognizable"
+          raise ArgumentError, "#{short_url} is not recognizable"
         end
         id = url_match[1]
         url = URL.first(id: id)
 
         if (url.nil?)
-          fail Grape::Exceptions::Validation, params: [short_url], message: "does not exist in our database"
+          raise ArgumentError, "#{short_url} does not exist in our database"
         end
 
         {shortUrl: short_url, longUrl: url.long_url}
@@ -87,6 +87,8 @@ module UrlShortener
     format :json
     mount UrlShortener::Url
     mount UrlShortener::Status
+
+    rescue_from ArgumentError
     add_swagger_documentation
   end
 
