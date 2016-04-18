@@ -71,6 +71,10 @@ module UrlShortener
         {shortUrl: short_url, longUrl: url.long_url}
       end
     end
+
+    rescue_from ArgumentError do |e|
+      error!({ error: 'Argument error: ' + e.message }, 400, { 'Content-Type' => 'application/json' })
+    end
   end
 
   class Status < Grape::API
@@ -88,7 +92,6 @@ module UrlShortener
     mount UrlShortener::Url
     mount UrlShortener::Status
 
-    rescue_from ArgumentError
     add_swagger_documentation
   end
 
