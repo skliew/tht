@@ -32,7 +32,11 @@ class Web < Sinatra::Base
     if (url.nil?)
       raise ArgumentError, "#{id} does not exist in our database"
     end
-    redirect url.long_url
+    if url.long_url != request.url
+      redirect url.long_url
+    else
+      url.long_url
+    end
   end
 end
 
