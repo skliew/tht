@@ -18,6 +18,10 @@ DataMapper.auto_upgrade!
 class Web < Sinatra::Base
   set :public_folder, Proc.new { File.join(root, "public/swagger_ui/dist") }
 
+  get '/' do
+    redirect '/index.html'
+  end
+
   get '/r/:id' do
     id = params['id']
     if id !~ /^\d+$/
