@@ -6,3 +6,10 @@ end
 
 task :default => [:spec]
 
+namespace :db do
+  task :recreate do
+    require_relative 'app'
+    DataMapper.auto_migrate!
+  end
+end
+
