@@ -3,14 +3,14 @@ require 'data_mapper'
 class URL
   include DataMapper::Resource
 
-  property :id, Serial, :index => true
-  property :long_url, String, :length => 255, :index => true
-
   CHARS = 'abcdefghijklmnopqrstuvwxyq01234567890ABCDEFGHIJKLMNOPQRSTUVWXYQ'
   SIZE = CHARS.size
 
   # Build a Hash of char => idx
   CHARSHASH = Hash[CHARS.split('').map.with_index.to_a]
+
+  property :id, Serial, :index => true
+  property :long_url, String, :length => 255, :index => true
 
   def self.id_to_code(id)
     id ||= 0
@@ -33,6 +33,11 @@ class URL
       result = result * SIZE + id
     end
     result
+  end
+
+  def self.find_by_code(code)
+    id = code_to_id(code)
+    first(id: id)
   end
 
 end

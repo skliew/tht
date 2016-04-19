@@ -24,12 +24,9 @@ class Web < Sinatra::Base
     redirect "/index.html?url=#{swagger_doc_url}"
   end
 
-  get '/r/:id' do
-    id = params['id']
-    if id !~ /^\d+$/
-      raise ArgumentError, "#{id} is not a valid ID"
-    end
-    url = URL.first(id: id)
+  get '/r/:code' do
+    code = params['code']
+    url = URL.find_by_code(code)
     if (url.nil?)
       raise ArgumentError, "#{id} does not exist in our database"
     end
@@ -47,7 +44,7 @@ module UrlShortener
     expose :long_url, as: :longUrl
     expose :shortUrl do |url, options|
       request = options[:request]
-      request.base_url + '/r/' + url.id.to_s
+      request.base_url + '/r/' + URL.id_to_code(url.id)
     end
   end
 
@@ -93,8 +90,8 @@ module UrlShortener
         if (url_match.nil?)
           raise ArgumentError, "#{short_url} is not recognizable"
         end
-        id = url_match[1]
-        url = URL.first(id: id)
+        code = url_match[1]
+        url = URL.find_by_code(code)
 
         if (url.nil?)
           raise ArgumentError, "#{short_url} does not exist in our database"

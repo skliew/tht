@@ -38,7 +38,13 @@ describe UrlShortener::API do
     # 201 indicates resource successfully created
     expect(last_response.status).to eq(201)
     base_url = last_request.base_url
-    expect(JSON.parse(last_response.body)['shortUrl']).to eq(base_url + '/r/1')
+    expect(JSON.parse(last_response.body)['shortUrl']).to eq(base_url + '/r/b')
+
+    post '/api/url', { longUrl: "http://google.com.my" }
+    # 201 indicates resource successfully created
+    expect(last_response.status).to eq(201)
+    base_url = last_request.base_url
+    expect(JSON.parse(last_response.body)['shortUrl']).to eq(base_url + '/r/c')
   end
 
   it 'reuses the created shortURL' do
@@ -46,9 +52,9 @@ describe UrlShortener::API do
     # 201 indicates resource successfully created
     expect(last_response.status).to eq(201)
     base_url = last_request.base_url
-    expect(JSON.parse(last_response.body)['shortUrl']).to eq(base_url + '/r/1')
+    expect(JSON.parse(last_response.body)['shortUrl']).to eq(base_url + '/r/b')
 
-    url = last_request.base_url + '/r/1'
+    url = last_request.base_url + '/r/b'
     get '/api/url', { shortUrl: url }
     expect(last_response.status).to eq(200)
     expect(JSON.parse(last_response.body)['longUrl']).to eq('http://google.com')
