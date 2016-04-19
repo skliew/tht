@@ -1,10 +1,7 @@
-begin
-  require 'rspec/core/rake_task'
-  RSpec::Core::RakeTask.new(:spec)
-rescue LoadError
-end
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
 
-task :default => [:spec]
+task default: [:spec]
 
 namespace :db do
   task :recreate do
@@ -12,4 +9,3 @@ namespace :db do
     DataMapper.auto_migrate!
   end
 end
-
