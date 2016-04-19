@@ -14,7 +14,7 @@ configure :production do
   DataMapper.setup(:default, ENV['DATABASE_URL'])
 end
 
-DataMapper.auto_upgrade!
+DataMapper.finalize.auto_upgrade!
 
 class Web < Sinatra::Base
   set :public_folder, Proc.new { File.join(root, "public/swagger_ui/dist") }
@@ -104,7 +104,7 @@ module UrlShortener
       end
     end
 
-    rescue_from ArgumentError, Grape::Exceptions::ValidationErrors do |e|
+    rescue_from :all do |e|
       error!({ error: e.message }, 422, { 'Content-Type' => 'application/json' })
     end
 
