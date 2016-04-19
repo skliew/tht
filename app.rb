@@ -50,6 +50,11 @@ module UrlShortener
       post do
         long_url = params[:longUrl]
         url = URL.first_or_create(long_url: long_url)
+        unless url.saved?
+          # errors is not an Array
+          message = url.errors.to_a.join("\n")
+          raise ArgumentError, message
+        end
         short_url = request.base_url + '/r/' + url.id.to_s
         {longUrl: long_url, shortUrl: short_url}
       end
@@ -76,9 +81,10 @@ module UrlShortener
       end
     end
 
-    rescue_from ArgumentError do |e|
-      error!({ error: 'Argument error: ' + e.message }, 400, { 'Content-Type' => 'application/json' })
+    rescue_from ArgumentError, Grape::Exceptions::ValidationErrors do |e|
+      error!({ error: e.message }, 422, { 'Content-Type' => 'application/json' })
     end
+
   end
 
   class Status < Grape::API
