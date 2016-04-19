@@ -102,7 +102,11 @@ module UrlShortener
     mount UrlShortener::Url
     mount UrlShortener::Status
 
-    add_swagger_documentation
+    if ENV['RACK_ENV'] == 'production'
+      add_swagger_documentation
+    else
+      add_swagger_documentation schemes: ['http']
+    end
   end
 
 end
