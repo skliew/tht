@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'grape'
+require 'grape-entity'
 require 'grape-swagger'
 require_relative 'model/url'
 require_relative 'validator'
@@ -41,9 +42,27 @@ class Web < Sinatra::Base
 end
 
 module UrlShortener
+
+  class UrlEntity < Grape::Entity
+    expose :long_url, as: :longUrl
+    expose :shortUrl do |url, options|
+      request = options[:request]
+      request.base_url + '/r/' + url.id.to_s
+    end
+  end
+
+  class ErrorEntity < Grape::Entity
+    expose :error
+  end
+
   class Url < Grape::API
     resource :url do
-      desc "Create a shortened URL"
+      desc "Create a shortened URL" do
+        http_codes [
+          { code: 201, message: 'Create a shortened URL', model: UrlEntity },
+          { code: 422, message: 'Unable to process entity', model: ErrorEntity }
+        ]
+      end
       params do
         requires :longUrl, :type => String, :desc => 'URL to shorten', valid_url: true
       end
@@ -55,11 +74,15 @@ module UrlShortener
           message = url.errors.to_a.join("\n")
           raise ArgumentError, message
         end
-        short_url = request.base_url + '/r/' + url.id.to_s
-        {longUrl: long_url, shortUrl: short_url}
+        present url, with: UrlEntity, request: request
       end
 
-      desc 'Get information about a shortened URL'
+      desc 'Get information about a shortened URL' do
+        http_codes [
+          { code: 200, message: 'Info about shortened URL', model: UrlEntity },
+          { code: 422, message: 'Unable to process entity', model: ErrorEntity }
+        ]
+      end
       params do
         requires :shortUrl, :type => String, :desc => 'Shortened URL', valid_url: true
       end
@@ -77,7 +100,7 @@ module UrlShortener
           raise ArgumentError, "#{short_url} does not exist in our database"
         end
 
-        {shortUrl: short_url, longUrl: url.long_url}
+        present url, with: UrlEntity, request: request
       end
     end
 
