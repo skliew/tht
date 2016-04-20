@@ -7,6 +7,7 @@ gem 'grape'
 gem 'data_mapper'
 gem 'grape-swagger'
 gem 'rake'
+gem 'puma'
 
 group :development, :test do
   gem 'rspec'
