@@ -15,6 +15,15 @@ describe URL do
     expect(result).to eq('b')
   end
 
+  it 'handles string input correctly' do
+    result = URL.id_to_code('1')
+    expect(result).to eq('b')
+  end
+
+  it 'throws exception when argument cannot be coerced into an integer' do
+    expect { URL.id_to_code('abc') }.to raise_error(ArgumentError)
+  end
+
   it 'converts a code correctly' do
     result = URL.code_to_id('b')
     expect(result).to eq(1)

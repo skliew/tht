@@ -15,7 +15,7 @@ class URL
   property :long_url, String, length: 255, index: true
 
   def self.id_to_code(id)
-    id ||= 0
+    id = Integer(id)
     code = []
     while id != 0
       idx = id % SIZE
